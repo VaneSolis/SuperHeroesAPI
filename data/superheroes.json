@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "name": "Peter Parker",
+    "alias": "Spider-Man",
+    "city": "New York",
+    "team": "Avengers",
+    "pet": {
+      "nombre": "Krypto",
+      "tipo": "Perro",
+      "edad": 3,
+      "poderes": ["vuelo", "fuerza sobrehumana"]
+    }
+  }
+]
