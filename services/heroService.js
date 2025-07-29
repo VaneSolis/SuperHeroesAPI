@@ -1,4 +1,5 @@
 import heroRepository from '../repositories/heroRepository.js';
+import { Pet } from '../models/heroModel.js';
 
 async function getAllHeroes() {
     return await heroRepository.getHeroes();
@@ -71,14 +72,92 @@ async function adoptPet(heroId, petData) {
     if (!petData || !petData.nombre || !petData.tipo) {
         throw new Error('La mascota debe tener al menos nombre y tipo');
     }
-    heroes[index].pet = {
-        nombre: petData.nombre,
-        tipo: petData.tipo,
-        edad: petData.edad || null,
-        poderes: petData.poderes || []
-    };
+    
+    // Crear una nueva instancia de Pet con el sistema de vida
+    const nuevaMascota = new Pet(
+        petData.nombre,
+        petData.tipo,
+        petData.edad || null,
+        petData.poderes || []
+    );
+    
+    heroes[index].pet = nuevaMascota;
     await heroRepository.saveHeroes(heroes);
     return heroes[index];
+}
+
+async function alimentarMascota(heroId) {
+    const heroes = await heroRepository.getHeroes();
+    const index = heroes.findIndex(hero => hero.id === parseInt(heroId));
+    if (index === -1) {
+        throw new Error('Héroe no encontrado');
+    }
+    
+    if (!heroes[index].pet) {
+        throw new Error('El héroe no tiene una mascota');
+    }
+    
+    if (!heroes[index].pet.estaViva()) {
+        throw new Error('La mascota ha fallecido');
+    }
+    
+    heroes[index].pet.alimentar();
+    await heroRepository.saveHeroes(heroes);
+    return heroes[index];
+}
+
+async function jugarConMascota(heroId) {
+    const heroes = await heroRepository.getHeroes();
+    const index = heroes.findIndex(hero => hero.id === parseInt(heroId));
+    if (index === -1) {
+        throw new Error('Héroe no encontrado');
+    }
+    
+    if (!heroes[index].pet) {
+        throw new Error('El héroe no tiene una mascota');
+    }
+    
+    if (!heroes[index].pet.estaViva()) {
+        throw new Error('La mascota ha fallecido');
+    }
+    
+    heroes[index].pet.jugar();
+    await heroRepository.saveHeroes(heroes);
+    return heroes[index];
+}
+
+async function banarMascota(heroId) {
+    const heroes = await heroRepository.getHeroes();
+    const index = heroes.findIndex(hero => hero.id === parseInt(heroId));
+    if (index === -1) {
+        throw new Error('Héroe no encontrado');
+    }
+    
+    if (!heroes[index].pet) {
+        throw new Error('El héroe no tiene una mascota');
+    }
+    
+    if (!heroes[index].pet.estaViva()) {
+        throw new Error('La mascota ha fallecido');
+    }
+    
+    heroes[index].pet.banar();
+    await heroRepository.saveHeroes(heroes);
+    return heroes[index];
+}
+
+async function obtenerEstadoMascota(heroId) {
+    const heroes = await heroRepository.getHeroes();
+    const hero = heroes.find(hero => hero.id === parseInt(heroId));
+    if (!hero) {
+        throw new Error('Héroe no encontrado');
+    }
+    
+    if (!hero.pet) {
+        throw new Error('El héroe no tiene una mascota');
+    }
+    
+    return hero.pet.obtenerEstado();
 }
 
 // ✅ Exportar todo en un solo objeto
@@ -89,6 +168,10 @@ export default {
     deleteHero,
     findHeroesByCity,
     faceVillain,
-    adoptPet
+    adoptPet,
+    alimentarMascota,
+    jugarConMascota,
+    banarMascota,
+    obtenerEstadoMascota
 };
 

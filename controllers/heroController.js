@@ -81,5 +81,50 @@ router.post('/heroes/:id/adoptar-mascota', async (req, res) => {
   }
 });
 
+// Nuevos endpoints para el cuidado de mascotas
+router.post('/heroes/:id/mascota/alimentar', async (req, res) => {
+  try {
+    const hero = await heroService.alimentarMascota(req.params.id);
+    res.json({ 
+      message: `¡${hero.pet.nombre} ha sido alimentado!`,
+      estado: hero.pet.obtenerEstado()
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/heroes/:id/mascota/jugar', async (req, res) => {
+  try {
+    const hero = await heroService.jugarConMascota(req.params.id);
+    res.json({ 
+      message: `¡Has jugado con ${hero.pet.nombre}!`,
+      estado: hero.pet.obtenerEstado()
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post('/heroes/:id/mascota/banar', async (req, res) => {
+  try {
+    const hero = await heroService.banarMascota(req.params.id);
+    res.json({ 
+      message: `¡${hero.pet.nombre} ha sido bañado!`,
+      estado: hero.pet.obtenerEstado()
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/heroes/:id/mascota/estado', async (req, res) => {
+  try {
+    const estado = await heroService.obtenerEstadoMascota(req.params.id);
+    res.json(estado);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
 export default router;

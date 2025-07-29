@@ -9,7 +9,14 @@
       "nombre": "Krypto",
       "tipo": "Perro",
       "edad": 3,
-      "poderes": ["vuelo", "fuerza sobrehumana"]
+      "poderes": ["vuelo", "fuerza sobrehumana"],
+      "vida": 100,
+      "hambre": 20,
+      "felicidad": 85,
+      "higiene": 90,
+      "ultimaAlimentacion": 1753796484307,
+      "ultimoJuego": 1753796484307,
+      "ultimoBano": 1753796484307
     }
   }
 ]
