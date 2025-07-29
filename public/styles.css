@@ -67,10 +67,27 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Sección de autenticación transparente */
+#authSection.section {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+}
+
 /* Auth Container */
 .auth-container {
     max-width: 500px;
     margin: 0 auto;
+}
+
+#authSection {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
 }
 
 .auth-form {
