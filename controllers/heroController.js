@@ -5,7 +5,7 @@ import Hero from "../models/heroModel.js";
 
 const router = express.Router();
 
-router.get("/heroes", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const heroes = await heroService.getAllHeroes();
         res.json(heroes);
@@ -14,7 +14,7 @@ router.get("/heroes", async (req, res) => {
     }
 });
 
-router.post("/heroes",
+router.post("/",
     [
         check('name').not().isEmpty().withMessage('El nombre es requerido'),
         check('alias').not().isEmpty().withMessage('El alias es requerido')
@@ -36,7 +36,7 @@ router.post("/heroes",
         }
 });
 
-router.put("/heroes/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
     try {
         const updatedHero = await heroService.updateHero(req.params.id, req.body);
         res.json(updatedHero);
@@ -45,7 +45,7 @@ router.put("/heroes/:id", async (req, res) => {
     }
 });
 
-router.delete('/heroes/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         const result = await heroService.deleteHero(req.params.id);
         res.json(result);
@@ -54,7 +54,7 @@ router.delete('/heroes/:id', async (req, res) => {
     }
 });
 
-router.get('/heroes/city/:city', async (req, res) => {
+router.get('/city/:city', async (req, res) => {
   try {
     const heroes = await heroService.findHeroesByCity(req.params.city);
     res.json(heroes);
@@ -63,7 +63,7 @@ router.get('/heroes/city/:city', async (req, res) => {
   }
 });
 
-router.post('/heroes/:id/enfrentar', async (req, res) => {
+router.post('/:id/enfrentar', async (req, res) => {
   try {
     const result = await heroService.faceVillain(req.params.id, req.body.villain);
     res.json({ message: result });
@@ -72,7 +72,7 @@ router.post('/heroes/:id/enfrentar', async (req, res) => {
   }
 });
 
-router.post('/heroes/:id/adoptar-mascota', async (req, res) => {
+router.post('/:id/adoptar-mascota', async (req, res) => {
   try {
     const hero = await heroService.adoptPet(req.params.id, req.body);
     res.json(hero);
@@ -82,7 +82,7 @@ router.post('/heroes/:id/adoptar-mascota', async (req, res) => {
 });
 
 // Nuevos endpoints para el cuidado de mascotas
-router.post('/heroes/:id/mascota/alimentar', async (req, res) => {
+router.post('/:id/mascota/alimentar', async (req, res) => {
   try {
     const hero = await heroService.alimentarMascota(req.params.id);
     res.json({ 
@@ -94,7 +94,7 @@ router.post('/heroes/:id/mascota/alimentar', async (req, res) => {
   }
 });
 
-router.post('/heroes/:id/mascota/jugar', async (req, res) => {
+router.post('/:id/mascota/jugar', async (req, res) => {
   try {
     const hero = await heroService.jugarConMascota(req.params.id);
     res.json({ 
@@ -106,7 +106,7 @@ router.post('/heroes/:id/mascota/jugar', async (req, res) => {
   }
 });
 
-router.post('/heroes/:id/mascota/banar', async (req, res) => {
+router.post('/:id/mascota/banar', async (req, res) => {
   try {
     const hero = await heroService.banarMascota(req.params.id);
     res.json({ 
@@ -118,7 +118,7 @@ router.post('/heroes/:id/mascota/banar', async (req, res) => {
   }
 });
 
-router.get('/heroes/:id/mascota/estado', async (req, res) => {
+router.get('/:id/mascota/estado', async (req, res) => {
   try {
     const estado = await heroService.obtenerEstadoMascota(req.params.id);
     res.json(estado);

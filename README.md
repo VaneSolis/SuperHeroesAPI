@@ -1,30 +1,70 @@
-# API de Superhéroes con Sistema de Mascotas
+# API de Superhéroes con Sistema de Mascotas y Autenticación JWT
 
-Esta API permite gestionar superhéroes y sus mascotas con un sistema completo de cuidado.
+Esta API permite gestionar superhéroes y sus mascotas con un sistema completo de cuidado, autenticación JWT y CORS habilitado.
 
-## Endpoints de Héroes
+## 🔐 Autenticación
+
+La API utiliza JWT (JSON Web Tokens) para la autenticación. Todas las rutas de héroes requieren un token válido.
+
+### Endpoints de Autenticación
+
+#### Login
+```
+POST /auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+#### Registro
+```
+POST /auth/register
+Content-Type: application/json
+
+{
+  "username": "nuevo_usuario",
+  "password": "contraseña123",
+  "email": "usuario@ejemplo.com"
+}
+```
+
+#### Verificar Token
+```
+GET /auth/verify
+Authorization: Bearer <tu_token_jwt>
+```
+
+## 🦸‍♂️ Endpoints de Héroes (Requieren Autenticación)
+
+**Nota:** Todos los endpoints de héroes requieren el header `Authorization: Bearer <token>`
 
 ### Obtener todos los héroes
 ```
 GET /heroes
+Authorization: Bearer <token>
 ```
 
 ### Crear un nuevo héroe
 ```
 POST /heroes
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "name": "Peter Parker",
-  "alias": "Spider-Man",
-  "city": "New York",
-  "team": "Avengers"
+  "name": "Bruce Wayne",
+  "alias": "Batman",
+  "city": "Gotham",
+  "team": "Justice League"
 }
 ```
 
 ### Actualizar un héroe
 ```
 PUT /heroes/:id
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
@@ -38,16 +78,19 @@ Content-Type: application/json
 ### Eliminar un héroe
 ```
 DELETE /heroes/:id
+Authorization: Bearer <token>
 ```
 
 ### Buscar héroes por ciudad
 ```
 GET /heroes/city/:city
+Authorization: Bearer <token>
 ```
 
 ### Enfrentar a un villano
 ```
 POST /heroes/:id/enfrentar
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
@@ -55,11 +98,12 @@ Content-Type: application/json
 }
 ```
 
-## Endpoints de Mascotas
+## 🐾 Endpoints de Mascotas (Requieren Autenticación)
 
 ### Adoptar una mascota
 ```
 POST /heroes/:id/adoptar-mascota
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
@@ -73,6 +117,7 @@ Content-Type: application/json
 ### Alimentar mascota
 ```
 POST /heroes/:id/mascota/alimentar
+Authorization: Bearer <token>
 ```
 **Efectos:**
 - Reduce el hambre en 30 puntos
@@ -82,6 +127,7 @@ POST /heroes/:id/mascota/alimentar
 ### Jugar con mascota
 ```
 POST /heroes/:id/mascota/jugar
+Authorization: Bearer <token>
 ```
 **Efectos:**
 - Aumenta la felicidad en 25 puntos
@@ -91,6 +137,7 @@ POST /heroes/:id/mascota/jugar
 ### Bañar mascota
 ```
 POST /heroes/:id/mascota/banar
+Authorization: Bearer <token>
 ```
 **Efectos:**
 - Restaura la higiene al 100%
@@ -100,6 +147,7 @@ POST /heroes/:id/mascota/banar
 ### Obtener estado de la mascota
 ```
 GET /heroes/:id/mascota/estado
+Authorization: Bearer <token>
 ```
 
 **Respuesta:**
@@ -116,6 +164,14 @@ GET /heroes/:id/mascota/estado
   "estaViva": true
 }
 ```
+
+## 🌐 CORS
+
+La API tiene CORS habilitado para los siguientes orígenes:
+- `http://localhost:3000`
+- `http://localhost:3001`
+- `http://127.0.0.1:3000`
+- `http://127.0.0.1:3001`
 
 ## Sistema de Vida de Mascotas
 
@@ -152,11 +208,36 @@ node app.js
 
 3. El servidor estará disponible en `http://localhost:3001`
 
+## Usuario por Defecto
+
+Al iniciar la aplicación por primera vez, se crea automáticamente un usuario administrador:
+
+- **Username**: `admin`
+- **Password**: `admin123`
+- **Role**: `admin`
+
 ## Ejemplos de Uso
 
-### Adoptar una mascota
+### 1. Login para obtener token
+```bash
+curl -X POST http://localhost:3001/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "admin123"
+  }'
+```
+
+### 2. Usar el token para acceder a héroes
+```bash
+curl -X GET http://localhost:3001/heroes \
+  -H "Authorization: Bearer <token_obtenido_del_login>"
+```
+
+### 3. Adoptar una mascota
 ```bash
 curl -X POST http://localhost:3001/heroes/1/adoptar-mascota \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
     "nombre": "Luna",
@@ -166,12 +247,23 @@ curl -X POST http://localhost:3001/heroes/1/adoptar-mascota \
   }'
 ```
 
-### Alimentar la mascota
+### 4. Alimentar la mascota
 ```bash
-curl -X POST http://localhost:3001/heroes/1/mascota/alimentar
+curl -X POST http://localhost:3001/heroes/1/mascota/alimentar \
+  -H "Authorization: Bearer <token>"
 ```
 
-### Ver estado de la mascota
-```bash
-curl http://localhost:3001/heroes/1/mascota/estado
-``` 
+## Variables de Entorno
+
+Puedes configurar las siguientes variables de entorno:
+
+- `JWT_SECRET`: Secreto para firmar los tokens JWT (por defecto: 'tu_secreto_super_seguro_2024')
+- `PORT`: Puerto del servidor (por defecto: 3001)
+
+## Seguridad
+
+- ✅ Contraseñas hasheadas con bcrypt
+- ✅ Tokens JWT con expiración de 24 horas
+- ✅ Validación de datos de entrada
+- ✅ CORS configurado para desarrollo
+- ✅ Middleware de autenticación en todas las rutas protegidas 

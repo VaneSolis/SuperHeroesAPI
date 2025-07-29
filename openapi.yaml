@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: API de Superhéroes
-  description: API para gestionar superhéroes y sus mascotas con sistema de cuidado
+  description: API para gestionar superhéroes y sus mascotas con sistema de cuidado y autenticación JWT
   version: 1.0.0
   contact:
     name: VaneSolis
@@ -11,232 +11,13 @@ servers:
   - url: http://localhost:3001
     description: Servidor de desarrollo
 
-paths:
-  /heroes:
-    get:
-      summary: Obtener todos los héroes
-      description: Retorna la lista completa de superhéroes
-      responses:
-        '200':
-          description: Lista de héroes obtenida exitosamente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Hero'
-    
-    post:
-      summary: Crear un nuevo héroe
-      description: Crea un nuevo superhéroe
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - name
-                - alias
-              properties:
-                name:
-                  type: string
-                  description: Nombre real del héroe
-                alias:
-                  type: string
-                  description: Nombre de superhéroe
-                city:
-                  type: string
-                  description: Ciudad donde opera el héroe
-                team:
-                  type: string
-                  description: Equipo al que pertenece
-      responses:
-        '201':
-          description: Héroe creado exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Hero'
-
-  /heroes/{id}:
-    put:
-      summary: Actualizar héroe
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                alias:
-                  type: string
-                city:
-                  type: string
-                team:
-                  type: string
-      responses:
-        '200':
-          description: Héroe actualizado exitosamente
-    
-    delete:
-      summary: Eliminar héroe
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Héroe eliminado exitosamente
-
-  /heroes/city/{city}:
-    get:
-      summary: Buscar héroes por ciudad
-      parameters:
-        - name: city
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Héroes encontrados
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Hero'
-
-  /heroes/{id}/enfrentar:
-    post:
-      summary: Enfrentar a un villano
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - villain
-              properties:
-                villain:
-                  type: string
-                  description: Nombre del villano a enfrentar
-      responses:
-        '200':
-          description: Enfrentamiento exitoso
-
-  /heroes/{id}/adoptar-mascota:
-    post:
-      summary: Adoptar una mascota
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - nombre
-                - tipo
-              properties:
-                nombre:
-                  type: string
-                  description: Nombre de la mascota
-                tipo:
-                  type: string
-                  description: Tipo de animal
-                edad:
-                  type: integer
-                  description: Edad de la mascota
-                poderes:
-                  type: array
-                  items:
-                    type: string
-                  description: Lista de poderes de la mascota
-      responses:
-        '200':
-          description: Mascota adoptada exitosamente
-
-  /heroes/{id}/mascota/estado:
-    get:
-      summary: Obtener estado de la mascota
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Estado de la mascota
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PetStatus'
-
-  /heroes/{id}/mascota/alimentar:
-    post:
-      summary: Alimentar mascota
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Mascota alimentada exitosamente
-
-  /heroes/{id}/mascota/jugar:
-    post:
-      summary: Jugar con mascota
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Juego exitoso
-
-  /heroes/{id}/mascota/banar:
-    post:
-      summary: Bañar mascota
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Mascota bañada exitosamente
-
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     Hero:
       type: object
@@ -298,4 +79,414 @@ components:
           minimum: 0
           maximum: 100
         estaViva:
-          type: boolean 
+          type: boolean
+
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: Nombre de usuario
+        password:
+          type: string
+          description: Contraseña
+
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - password
+        - email
+      properties:
+        username:
+          type: string
+          minLength: 3
+          description: Nombre de usuario (mínimo 3 caracteres)
+        password:
+          type: string
+          minLength: 6
+          description: Contraseña (mínimo 6 caracteres)
+        email:
+          type: string
+          format: email
+          description: Email válido
+
+    AuthResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        token:
+          type: string
+          description: JWT token
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            username:
+              type: string
+            role:
+              type: string
+
+paths:
+  /:
+    get:
+      summary: Página de bienvenida
+      description: Información general de la API
+      responses:
+        '200':
+          description: Información de la API
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  version:
+                    type: string
+                  endpoints:
+                    type: object
+                  features:
+                    type: array
+                    items:
+                      type: string
+
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      description: Autenticar usuario y obtener token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Credenciales inválidas
+        '400':
+          description: Datos de entrada inválidos
+
+  /auth/register:
+    post:
+      summary: Registrar nuevo usuario
+      description: Crear una nueva cuenta de usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Datos de entrada inválidos o usuario ya existe
+
+  /auth/verify:
+    get:
+      summary: Verificar token JWT
+      description: Verificar si el token JWT es válido
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Token válido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  valid:
+                    type: boolean
+                  user:
+                    type: object
+        '401':
+          description: Token no proporcionado
+        '403':
+          description: Token inválido
+
+  /heroes:
+    get:
+      summary: Obtener todos los héroes
+      description: Retorna la lista completa de superhéroes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de héroes obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Hero'
+        '401':
+          description: Token de autenticación requerido
+    
+    post:
+      summary: Crear un nuevo héroe
+      description: Crea un nuevo superhéroe
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - alias
+              properties:
+                name:
+                  type: string
+                  description: Nombre real del héroe
+                alias:
+                  type: string
+                  description: Nombre de superhéroe
+                city:
+                  type: string
+                  description: Ciudad donde opera el héroe
+                team:
+                  type: string
+                  description: Equipo al que pertenece
+      responses:
+        '201':
+          description: Héroe creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hero'
+        '401':
+          description: Token de autenticación requerido
+
+  /heroes/{id}:
+    put:
+      summary: Actualizar héroe
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                alias:
+                  type: string
+                city:
+                  type: string
+                team:
+                  type: string
+      responses:
+        '200':
+          description: Héroe actualizado exitosamente
+        '401':
+          description: Token de autenticación requerido
+    
+    delete:
+      summary: Eliminar héroe
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Héroe eliminado exitosamente
+        '401':
+          description: Token de autenticación requerido
+
+  /heroes/city/{city}:
+    get:
+      summary: Buscar héroes por ciudad
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: city
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Héroes encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Hero'
+        '401':
+          description: Token de autenticación requerido
+
+  /heroes/{id}/enfrentar:
+    post:
+      summary: Enfrentar a un villano
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - villain
+              properties:
+                villain:
+                  type: string
+                  description: Nombre del villano a enfrentar
+      responses:
+        '200':
+          description: Enfrentamiento exitoso
+        '401':
+          description: Token de autenticación requerido
+
+  /heroes/{id}/adoptar-mascota:
+    post:
+      summary: Adoptar una mascota
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nombre
+                - tipo
+              properties:
+                nombre:
+                  type: string
+                  description: Nombre de la mascota
+                tipo:
+                  type: string
+                  description: Tipo de animal
+                edad:
+                  type: integer
+                  description: Edad de la mascota
+                poderes:
+                  type: array
+                  items:
+                    type: string
+                  description: Lista de poderes de la mascota
+      responses:
+        '200':
+          description: Mascota adoptada exitosamente
+        '401':
+          description: Token de autenticación requerido
+
+  /heroes/{id}/mascota/estado:
+    get:
+      summary: Obtener estado de la mascota
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Estado de la mascota
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetStatus'
+        '401':
+          description: Token de autenticación requerido
+
+  /heroes/{id}/mascota/alimentar:
+    post:
+      summary: Alimentar mascota
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Mascota alimentada exitosamente
+        '401':
+          description: Token de autenticación requerido
+
+  /heroes/{id}/mascota/jugar:
+    post:
+      summary: Jugar con mascota
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Juego exitoso
+        '401':
+          description: Token de autenticación requerido
+
+  /heroes/{id}/mascota/banar:
+    post:
+      summary: Bañar mascota
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Mascota bañada exitosamente
+        '401':
+          description: Token de autenticación requerido 
