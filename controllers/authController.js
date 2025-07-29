@@ -80,8 +80,7 @@ router.post('/login', [
 // Registro
 router.post('/register', [
     check('username').isLength({ min: 3 }).withMessage('El nombre de usuario debe tener al menos 3 caracteres'),
-    check('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
-    check('email').isEmail().withMessage('El email debe ser válido')
+    check('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -89,15 +88,15 @@ router.post('/register', [
     }
 
     try {
-        const { username, password, email } = req.body;
+        const { username, password } = req.body;
         const users = await getUsers();
 
         // Verificar si el usuario ya existe
-        const existingUser = users.find(u => u.username === username || u.email === email);
+        const existingUser = users.find(u => u.username === username);
         if (existingUser) {
             return res.status(400).json({ 
                 error: 'Usuario ya existe',
-                message: 'El nombre de usuario o email ya está registrado'
+                message: 'El nombre de usuario ya está registrado'
             });
         }
 
@@ -106,7 +105,6 @@ router.post('/register', [
         const newUser = {
             id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
             username,
-            email,
             password: hashedPassword,
             role: 'user'
         };

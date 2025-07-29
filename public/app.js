@@ -6,7 +6,7 @@ let currentUser = null;
 let authToken = localStorage.getItem('authToken');
 
 // Elementos del DOM
-const loginSection = document.getElementById('loginSection');
+const authSection = document.getElementById('authSection');
 const appSection = document.getElementById('appSection');
 const loading = document.getElementById('loading');
 const notifications = document.getElementById('notifications');
@@ -20,7 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Configurar event listeners
 function setupEventListeners() {
     // Login form
-    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    document.getElementById('loginFormElement').addEventListener('submit', handleLogin);
+    
+    // Register form
+    document.getElementById('registerFormElement').addEventListener('submit', handleRegister);
     
     // Navigation
     document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -39,7 +42,7 @@ function checkAuthStatus() {
     if (authToken) {
         verifyToken();
     } else {
-        showLoginSection();
+        showAuthSection();
     }
 }
 
@@ -47,8 +50,8 @@ function checkAuthStatus() {
 async function handleLogin(e) {
     e.preventDefault();
     
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
     
     showLoading();
     
@@ -73,6 +76,53 @@ async function handleLogin(e) {
             loadUserInfo();
         } else {
             showNotification(data.message || 'Error en el login', 'error');
+        }
+    } catch (error) {
+        showNotification('Error de conexión', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+// Manejar registro
+async function handleRegister(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('registerUsername').value;
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('registerConfirmPassword').value;
+    
+    // Validar que las contraseñas coincidan
+    if (password !== confirmPassword) {
+        showNotification('Las contraseñas no coinciden', 'error');
+        return;
+    }
+    
+    // Validar longitud mínima de contraseña
+    if (password.length < 6) {
+        showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
+        return;
+    }
+    
+    showLoading();
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showNotification('Usuario registrado exitosamente. Ahora puedes iniciar sesión.', 'success');
+            showLoginForm(); // Cambiar al formulario de login
+            document.getElementById('registerFormElement').reset();
+        } else {
+            showNotification(data.message || 'Error en el registro', 'error');
         }
     } catch (error) {
         showNotification('Error de conexión', 'error');
@@ -110,19 +160,31 @@ function logout() {
     authToken = null;
     currentUser = null;
     localStorage.removeItem('authToken');
-    showLoginSection();
+    showAuthSection();
     showNotification('Sesión cerrada', 'warning');
 }
 
-// Mostrar sección de login
-function showLoginSection() {
-    loginSection.classList.remove('hidden');
+// Mostrar sección de autenticación
+function showAuthSection() {
+    authSection.classList.remove('hidden');
     appSection.classList.add('hidden');
+}
+
+// Mostrar formulario de login
+function showLoginForm() {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('registerForm').classList.add('hidden');
+}
+
+// Mostrar formulario de registro
+function showRegisterForm() {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('registerForm').classList.remove('hidden');
 }
 
 // Mostrar sección de la aplicación
 function showAppSection() {
-    loginSection.classList.add('hidden');
+    authSection.classList.add('hidden');
     appSection.classList.remove('hidden');
 }
 
@@ -614,4 +676,6 @@ window.feedPet = feedPet;
 window.playWithPet = playWithPet;
 window.bathePet = bathePet;
 window.deleteHero = deleteHero;
-window.showPetStatus = showPetStatus; 
+window.showPetStatus = showPetStatus;
+window.showLoginForm = showLoginForm;
+window.showRegisterForm = showRegisterForm; 
