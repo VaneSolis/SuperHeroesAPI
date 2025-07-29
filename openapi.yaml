@@ -1,0 +1,301 @@
+openapi: 3.0.0
+info:
+  title: API de Superhéroes
+  description: API para gestionar superhéroes y sus mascotas con sistema de cuidado
+  version: 1.0.0
+  contact:
+    name: VaneSolis
+    url: https://github.com/VaneSolis/SuperHeroesAPI
+
+servers:
+  - url: http://localhost:3001
+    description: Servidor de desarrollo
+
+paths:
+  /heroes:
+    get:
+      summary: Obtener todos los héroes
+      description: Retorna la lista completa de superhéroes
+      responses:
+        '200':
+          description: Lista de héroes obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Hero'
+    
+    post:
+      summary: Crear un nuevo héroe
+      description: Crea un nuevo superhéroe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - alias
+              properties:
+                name:
+                  type: string
+                  description: Nombre real del héroe
+                alias:
+                  type: string
+                  description: Nombre de superhéroe
+                city:
+                  type: string
+                  description: Ciudad donde opera el héroe
+                team:
+                  type: string
+                  description: Equipo al que pertenece
+      responses:
+        '201':
+          description: Héroe creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hero'
+
+  /heroes/{id}:
+    put:
+      summary: Actualizar héroe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                alias:
+                  type: string
+                city:
+                  type: string
+                team:
+                  type: string
+      responses:
+        '200':
+          description: Héroe actualizado exitosamente
+    
+    delete:
+      summary: Eliminar héroe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Héroe eliminado exitosamente
+
+  /heroes/city/{city}:
+    get:
+      summary: Buscar héroes por ciudad
+      parameters:
+        - name: city
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Héroes encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Hero'
+
+  /heroes/{id}/enfrentar:
+    post:
+      summary: Enfrentar a un villano
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - villain
+              properties:
+                villain:
+                  type: string
+                  description: Nombre del villano a enfrentar
+      responses:
+        '200':
+          description: Enfrentamiento exitoso
+
+  /heroes/{id}/adoptar-mascota:
+    post:
+      summary: Adoptar una mascota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nombre
+                - tipo
+              properties:
+                nombre:
+                  type: string
+                  description: Nombre de la mascota
+                tipo:
+                  type: string
+                  description: Tipo de animal
+                edad:
+                  type: integer
+                  description: Edad de la mascota
+                poderes:
+                  type: array
+                  items:
+                    type: string
+                  description: Lista de poderes de la mascota
+      responses:
+        '200':
+          description: Mascota adoptada exitosamente
+
+  /heroes/{id}/mascota/estado:
+    get:
+      summary: Obtener estado de la mascota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Estado de la mascota
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetStatus'
+
+  /heroes/{id}/mascota/alimentar:
+    post:
+      summary: Alimentar mascota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Mascota alimentada exitosamente
+
+  /heroes/{id}/mascota/jugar:
+    post:
+      summary: Jugar con mascota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Juego exitoso
+
+  /heroes/{id}/mascota/banar:
+    post:
+      summary: Bañar mascota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Mascota bañada exitosamente
+
+components:
+  schemas:
+    Hero:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        alias:
+          type: string
+        city:
+          type: string
+        team:
+          type: string
+        pet:
+          $ref: '#/components/schemas/Pet'
+    
+    Pet:
+      type: object
+      properties:
+        nombre:
+          type: string
+        tipo:
+          type: string
+        edad:
+          type: integer
+        poderes:
+          type: array
+          items:
+            type: string
+    
+    PetStatus:
+      type: object
+      properties:
+        nombre:
+          type: string
+        tipo:
+          type: string
+        edad:
+          type: integer
+        poderes:
+          type: array
+          items:
+            type: string
+        vida:
+          type: integer
+          minimum: 0
+          maximum: 100
+        hambre:
+          type: integer
+          minimum: 0
+          maximum: 100
+        felicidad:
+          type: integer
+          minimum: 0
+          maximum: 100
+        higiene:
+          type: integer
+          minimum: 0
+          maximum: 100
+        estaViva:
+          type: boolean 
