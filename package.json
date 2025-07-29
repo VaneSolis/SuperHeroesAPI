@@ -1,21 +1,32 @@
 {
-  "name": "superheroes",
+  "name": "superheroes-api",
   "version": "1.0.0",
-  "type": "module",
-  "description": "",
+  "description": "API de Superhéroes con sistema de mascotas y autenticación JWT",
   "main": "app.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "dev": "node app.js"
   },
-  "keywords": [],
-  "author": "javerage",
-  "license": "ISC",
+  "keywords": [
+    "api",
+    "superheroes",
+    "pets",
+    "jwt",
+    "express"
+  ],
+  "author": "VaneSolis",
+  "license": "MIT",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "express-validator": "^7.2.1",
-    "fs-extra": "^11.3.0",
-    "jsonwebtoken": "^9.0.2"
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "fs-extra": "^11.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

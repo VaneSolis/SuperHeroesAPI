@@ -1,5 +1,7 @@
 // Configuración de la API
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3001' 
+    : `https://${window.location.hostname}`;
 
 // Variables globales
 let currentUser = null;

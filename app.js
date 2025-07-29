@@ -8,7 +8,7 @@ import authController from './controllers/authController.js';
 import { authenticateToken } from './middleware/auth.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Configurar __dirname para ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -25,10 +25,7 @@ app.use(cors({
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Servir archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Ruta de bienvenida
+// Ruta de bienvenida (debe ir antes de los archivos estáticos)
 app.get('/', (req, res) => {
     res.json({
         message: '¡Bienvenido a la API de Superhéroes! 🦸‍♂️',
@@ -46,6 +43,9 @@ app.get('/', (req, res) => {
         ]
     });
 });
+
+// Servir archivos estáticos (después de las rutas de API)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Rutas de autenticación (públicas)
 app.use('/auth', authController);
