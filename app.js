@@ -1,12 +1,18 @@
 // app.js
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import heroController from './controllers/heroController.js';
 import authController from './controllers/authController.js';
 import { authenticateToken } from './middleware/auth.js';
 
 const app = express();
 const PORT = 3001;
+
+// Configurar __dirname para ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuración de CORS
 app.use(cors({
@@ -18,6 +24,9 @@ app.use(cors({
 
 // Middleware para parsear JSON
 app.use(express.json());
+
+// Servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Ruta de bienvenida
 app.get('/', (req, res) => {
@@ -50,5 +59,6 @@ app.listen(PORT, () => {
     console.log(`🔐 Sistema de autenticación JWT habilitado`);
     console.log(`🌐 CORS habilitado para desarrollo`);
     console.log(`📚 Documentación: https://github.com/VaneSolis/SuperHeroesAPI`);
+    console.log(`🌍 Interfaz web disponible en http://localhost:${PORT}/index.html`);
 });
 
