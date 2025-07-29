@@ -58,11 +58,13 @@ body {
 
 /* Sections */
 .section {
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Auth Container */
@@ -72,11 +74,13 @@ body {
 }
 
 .auth-form {
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .auth-switch {
@@ -266,11 +270,12 @@ body {
 /* Cards */
 .hero-card,
 .pet-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    border: 2px solid #f8f9fa;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
 }
 
@@ -356,10 +361,11 @@ body {
 
 /* User Info */
 .user-info {
-    background: #f8f9fa;
+    background: rgba(248, 249, 250, 0.9);
+    backdrop-filter: blur(10px);
     padding: 20px;
     border-radius: 12px;
-    border: 2px solid #e9ecef;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .user-info h3 {
@@ -397,7 +403,8 @@ body {
 }
 
 .modal-content {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
     border-radius: 15px;
     padding: 30px;
     max-width: 500px;
@@ -405,6 +412,7 @@ body {
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .modal-header {
@@ -488,7 +496,8 @@ body {
 }
 
 .notification {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     border-radius: 8px;
     padding: 15px 20px;
     margin-bottom: 10px;
@@ -496,6 +505,7 @@ body {
     border-left: 4px solid #ff9a9e;
     animation: slideIn 0.3s ease;
     max-width: 400px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .notification.success {
